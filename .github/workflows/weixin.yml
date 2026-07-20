@@ -1,0 +1,41 @@
+name: Daily WeChat Reminder
+
+on:
+  schedule:
+    # 北京时间每天早上 7:00 推送（UTC 前一天 23:00）
+    - cron: '0 23 * * *'
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run daily reminder
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+          APP_SECRET: ${{ secrets.APP_SECRET }}
+          TEMPLATE_ID: ${{ secrets.TEMPLATE_ID }}
+          USER: ${{ secrets.USER }}
+          WEATHER_KEY: ${{ secrets.WEATHER_KEY }}
+          REGION: ${{ secrets.REGION }}
+          MY_CONSTELLATION: ${{ secrets.MY_CONSTELLATION }}
+          HER_CONSTELLATION: ${{ secrets.HER_CONSTELLATION }}
+          LOVE_DATE: ${{ secrets.LOVE_DATE }}
+          BIRTHDAY_ME: ${{ secrets.BIRTHDAY_ME }}
+          BIRTHDAY_HER: ${{ secrets.BIRTHDAY_HER }}
+          NOTE_CH: ${{ secrets.NOTE_CH }}
+          NOTE_EN: ${{ secrets.NOTE_EN }}
+        run: python main.py
